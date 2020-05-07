@@ -1,30 +1,60 @@
 package app.calculator;
 
-// 초기 버전
-public class Number {
-    private int no;
+import java.util.HashMap;
+import java.util.Map;
 
-    public Number(int no) {
-        this.no = no;
+// 람다식 미사용
+public class Number {
+    private static Map<String, Calculate> actions = new HashMap<>();
+
+    static {
+        actions.put(Calculation.PLUS.expression,     Calculation.PLUS.calculate);
+        actions.put(Calculation.SUBTRACT.expression, Calculation.SUBTRACT.calculate);
+        actions.put(Calculation.MULTIPLY.expression, Calculation.MULTIPLY.calculate);
+        actions.put(Calculation.DIVISION.expression, Calculation.DIVISION.calculate);
     }
 
-    public Number calculate(String expression, Number number) {
-        if ("+".equals(expression)) {
-            return new Number(this.no + number.no);
+    private enum Calculation {
+        PLUS("+", new Calculate(){
+            @Override
+            public int apply(int firstNumber, int secondNumber) {
+                return firstNumber + secondNumber;
+            }
+        }),
+        SUBTRACT("-", new Calculate(){
+            @Override
+            public int apply(int firstNumber, int secondNumber) {
+                return firstNumber - secondNumber;
+            }
+        }),
+        MULTIPLY("*", new Calculate(){
+            @Override
+            public int apply(int firstNumber, int secondNumber) {
+                return firstNumber * secondNumber;
+            }
+        }),
+        DIVISION("/", new Calculate(){
+            @Override
+            public int apply(int firstNumber, int secondNumber) {
+                return firstNumber / secondNumber;
+            }
+        });
+
+        Calculation(String expression, Calculate calculate) {
+            this.expression = expression;
+            this.calculate = calculate;
         }
 
-        if ("-".equals(expression)) {
-            return new Number(this.no - number.no);
-        }
+        public String expression;
+        public Calculate calculate;
 
-        if ("*".equals(expression)) {
-            return new Number(this.no * number.no);
-        }
+    }
 
-        if ("/".equals(expression)) {
-            return new Number(this.no / number.no);
-        }
+    public interface Calculate{
+        public int apply(int firstNumber, int secondNumber);
+    }
 
-        throw new IllegalArgumentException();
+    public int calculate(String expression, int firstNumber, int secondNumber) {
+        return actions.get(expression).apply(firstNumber, secondNumber);
     }
 }
