@@ -1,10 +1,6 @@
 package app.calculator;
 
-/**
- * @since       2020.05.07
- * @author      pollra
- * @description Number
- **********************************************************************************************************************/
+// 초기 버전
 public class Number {
     private int no;
 
